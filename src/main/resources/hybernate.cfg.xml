@@ -11,8 +11,7 @@
         <property name="hibernate.connection.password">owod</property>
 
         <!-- Dialecte SQL pour PostgreSQL -->
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
         <!-- Options supplémentaires -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
