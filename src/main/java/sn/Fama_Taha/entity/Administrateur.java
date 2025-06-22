@@ -1,5 +1,6 @@
-package sn.Fama_Taha;
+package sn.Fama_Taha.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -14,6 +15,8 @@ import lombok.Setter;
 
 public class Administrateur {
     @Id
-    
-    
+    @Column(name = "login",length = 50)
+    private String login;
+    @Column(name = "password", length = 100)
+    private String password;
 }
