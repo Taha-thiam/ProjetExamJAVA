@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             HibernateUtils.getSession();
-            SwingUtilities.invokeLater(LoginView::new);
+            SwingUtilities.invokeLater(LoginView::new); 
         } catch (Exception e) {
             e.printStackTrace();
         }

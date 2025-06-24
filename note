@@ -324,7 +324,6 @@
 
 
 
-
 // package sn.Fama_Taha.view;
 
 // import javax.swing.*;
@@ -411,111 +410,34 @@
 //         loginButton.addActionListener(_ -> SeConnecter());
 //     }
 
-//     private void SeConnecter() {
-//         String login = loginField.getText();
-//         String password = new String(passwordField.getPassword());
-//         try {
-//             Administrateur administrateur = authRepository.login(login, password);
-//             errorMessage.setText("Bienvenue, " + administrateur.getLogin() + " !");
-//             errorMessage.setForeground(new Color(39, 174, 96));
-//             errorMessage.setVisible(true);
-//             // Ouvrir la fenêtre principale ou autre action
-//         } catch (AdministrateurNotFoundException e) {
-//             errorMessage.setText(e.getMessage());
-//             errorMessage.setForeground(Color.RED);
-//             errorMessage.setVisible(true);
-//         } catch (Exception e) {
-//             errorMessage.setText("Erreur technique : " + e.getMessage());
-//             errorMessage.setForeground(Color.RED);
-//             errorMessage.setVisible(true);
-//         }
-//     }
-// }
+//    // ...existing code...
+// private void SeConnecter() {
+//     String login = loginField.getText();
+//     String password = new String(passwordField.getPassword());
+//     try {
+//         Administrateur administrateur = authRepository.login(login, password);
+//         errorMessage.setText("Bienvenue, " + administrateur.getLogin() + " !");
+//         errorMessage.setForeground(new Color(39, 174, 96));
+//         errorMessage.setVisible(true);
 
-
-
-
-
-
-
-
-
-// package sn.Fama_Taha.view;
-
-// import javax.swing.*;
-// import java.awt.*;
-
-
-
-// public class LayoutAvecMenuExemple extends JFrame {
-
-//     public LayoutAvecMenuExemple() {
-//         setTitle("Gestion de Bibliothèque");
-//         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//         setSize(800, 600);
-//         setLocationRelativeTo(null);
-
-//         // Barre de menu
-//         JMenuBar menuBar = new JMenuBar();
-
-//         // Menu Membres
-//         JMenu menuMembre = new JMenu("Membres");
-//         JMenuItem itemListerMembres = new JMenuItem("Lister les membres");
-//         JMenuItem itemAjouterMembre = new JMenuItem("Ajouter un membre");
-//         menuMembre.add(itemListerMembres);
-//         menuMembre.add(itemAjouterMembre);
-
-//         // Menu Ouvrages
-//         JMenu menuOuvrage = new JMenu("Ouvrages");
-//         JMenuItem itemListerOuvrages = new JMenuItem("Lister les ouvrages");
-//         JMenuItem itemAjouterOuvrage = new JMenuItem("Ajouter un ouvrage");
-//         menuOuvrage.add(itemListerOuvrages);
-//         menuOuvrage.add(itemAjouterOuvrage);
-
-//         // Menu Emprunts
-//         JMenu menuEmprunt = new JMenu("Emprunts");
-//         JMenuItem itemListerEmprunts = new JMenuItem("Lister les emprunts");
-//         menuEmprunt.add(itemListerEmprunts);
-
-//         // Menu Réservations
-//         JMenu menuReservation = new JMenu("Réservations");
-//         JMenuItem itemListerReservations = new JMenuItem("Lister les réservations");
-//         menuReservation.add(itemListerReservations);
-
-//         // Ajout des menus à la barre
-//         menuBar.add(menuMembre);
-//         menuBar.add(menuOuvrage);
-//         menuBar.add(menuEmprunt);
-//         menuBar.add(menuReservation);
-
-//         setJMenuBar(menuBar);
-
-//         // Panel principal (pour afficher les vues selon le menu)
-//         JPanel mainPanel = new JPanel(new BorderLayout());
-//         add(mainPanel);
-
-//         // Actions (exemple)
-//         itemListerMembres.addActionListener(_ -> {
-//             mainPanel.removeAll();
-//             mainPanel.add(new JLabel("Liste des membres (à implémenter)"), BorderLayout.CENTER);
-//             mainPanel.revalidate();
-//             mainPanel.repaint();
+//         // Ouvrir la fenêtre principale et fermer la fenêtre de login
+//         SwingUtilities.invokeLater(() -> {
+//             new LayoutAvecMenuExemple(); // Affiche la fenêtre principale
+//             this.dispose(); // Ferme la fenêtre de login
 //         });
 
-//         itemListerOuvrages.addActionListener(_ -> {
-//             mainPanel.removeAll();
-//             mainPanel.add(new JLabel("Liste des ouvrages (à implémenter)"), BorderLayout.CENTER);
-//             mainPanel.revalidate();
-//             mainPanel.repaint();
-//         });
-
-//         // ... Ajouter d'autres actions selon les besoins
-
-//         setVisible(true);
+//     } catch (AdministrateurNotFoundException e) {
+//         errorMessage.setText(e.getMessage());
+//         errorMessage.setForeground(Color.RED);
+//         errorMessage.setVisible(true);
+//     } catch (Exception e) {
+//         errorMessage.setText("Erreur technique : " + e.getMessage());
+//         errorMessage.setForeground(Color.RED);
+//         errorMessage.setVisible(true);
 //     }
 // }
-
-
+// // ...existing code...
+// }
 
 
 
@@ -529,7 +451,7 @@
 // import sn.Fama_Taha.repository.MembreRepository;
 
 // import javax.swing.*;
-// import javax.swing.table.DefaultTableModel;
+// import javax.swing.table.*;
 // import java.awt.*;
 // import java.util.List;
 
@@ -540,32 +462,83 @@
 
 //     public MembreView() {
 //         setLayout(new BorderLayout());
+//         setBackground(new Color(245, 245, 250));
 
-//         // Colonnes du tableau (sans "Créateur")
+//         // Colonnes du tableau
 //         String[] columns = {"ID", "Nom", "Prénom", "Email", "Téléphone", "Type"};
-//         tableModel = new DefaultTableModel(columns, 0);
+//         tableModel = new DefaultTableModel(columns, 0) {
+//             public boolean isCellEditable(int row, int column) { return false; }
+//         };
 //         membreTable = new JTable(tableModel);
+
+//         // Style du tableau
+//         membreTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+//         membreTable.setRowHeight(28);
+//         membreTable.setSelectionBackground(new Color(102, 178, 255));
+//         membreTable.setSelectionForeground(Color.BLACK);
+
+//         // En-tête stylisé
+//         JTableHeader header = membreTable.getTableHeader();
+//         header.setBackground(new Color(44, 62, 80));
+//         header.setForeground(Color.WHITE);
+//         header.setFont(new Font("Segoe UI", Font.BOLD, 16));
+//         ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+
+//         // Rendu alterné des lignes
+//         membreTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+//             @Override
+//             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//                 if (!isSelected) {
+//                     c.setBackground(row % 2 == 0 ? new Color(230, 240, 255) : Color.WHITE);
+//                 }
+//                 setHorizontalAlignment(CENTER);
+//                 return c;
+//             }
+//         });
 
 //         // Chargement des membres
 //         loadMembres();
 
 //         JScrollPane scrollPane = new JScrollPane(membreTable);
+//         scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 //         add(scrollPane, BorderLayout.CENTER);
 
-//         // Boutons
-//         JButton addButton = new JButton("Ajouter un membre");
-//         JButton editButton = new JButton("Modifier");
-//         JButton deleteButton = new JButton("Supprimer");
+//         // Boutons stylisés
+//         JButton addButton = createButton("Ajouter un membre", new Color(46, 204, 113));
+//         JButton editButton = createButton("Modifier", new Color(241, 196, 15));
+//         JButton deleteButton = createButton("Supprimer", new Color(231, 76, 60));
 
 //         addButton.addActionListener(_ -> ajouterMembre());
 //         editButton.addActionListener(_ -> modifierMembre());
 //         deleteButton.addActionListener(_ -> supprimerMembre());
 
 //         JPanel buttonPanel = new JPanel();
+//         buttonPanel.setBackground(new Color(245, 245, 250));
+//         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 //         buttonPanel.add(addButton);
 //         buttonPanel.add(editButton);
 //         buttonPanel.add(deleteButton);
 //         add(buttonPanel, BorderLayout.SOUTH);
+
+//         // Titre
+//         JLabel title = new JLabel("Gestion des Membres");
+//         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+//         title.setForeground(new Color(44, 62, 80));
+//         title.setHorizontalAlignment(SwingConstants.CENTER);
+//         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+//         add(title, BorderLayout.NORTH);
+//     }
+
+//     private JButton createButton(String text, Color bg) {
+//         JButton btn = new JButton(text);
+//         btn.setFocusPainted(false);
+//         btn.setBackground(bg);
+//         btn.setForeground(Color.WHITE);
+//         btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+//         btn.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
+//         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//         return btn;
 //     }
 
 //     private void loadMembres() {
@@ -617,17 +590,17 @@
 
 
 
+
+
+
 // package sn.Fama_Taha.view;
 // import sn.Fama_Taha.entity.Ouvrage;
 // import sn.Fama_Taha.repository.OuvrageRepository;
 // import javax.swing.*;
+// import javax.swing.table.DefaultTableCellRenderer;
 // import javax.swing.table.DefaultTableModel;
 // import java.awt.*;
 // import java.util.List;
-
-
-
-
 
 // public class OuvrageView extends JPanel {
 //     private JTable ouvrageTable;
@@ -636,29 +609,80 @@
 
 //     public OuvrageView() {
 //         setLayout(new BorderLayout());
+//         setBackground(new Color(245, 245, 250));
 
 //         String[] columns = {"ID", "Titre", "Auteur", "Année", "Genre", "Disponible"};
-//         tableModel = new DefaultTableModel(columns, 0);
+//         tableModel = new DefaultTableModel(columns, 0) {
+//             public boolean isCellEditable(int row, int column) {
+//                 return false;
+//             }
+//         };
 //         ouvrageTable = new JTable(tableModel);
+//         ouvrageTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+//         ouvrageTable.setRowHeight(28);
+//         ouvrageTable.setGridColor(new Color(220, 220, 220));
+//         ouvrageTable.setSelectionBackground(new Color(102, 178, 255));
+//         ouvrageTable.setSelectionForeground(Color.BLACK);
+
+//         // En-tête du tableau stylisée
+//         ouvrageTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
+//         ouvrageTable.getTableHeader().setBackground(new Color(51, 102, 204));
+//         ouvrageTable.getTableHeader().setForeground(Color.WHITE);
+
+//         // Cellules alternées colorées
+//         ouvrageTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+//             @Override
+//             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//                 if (!isSelected) {
+//                     c.setBackground(row % 2 == 0 ? new Color(235, 243, 255) : Color.WHITE);
+//                 } else {
+//                     c.setBackground(new Color(102, 178, 255));
+//                 }
+//                 return c;
+//             }
+//         });
 
 //         loadOuvrages();
 
 //         JScrollPane scrollPane = new JScrollPane(ouvrageTable);
+//         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 //         add(scrollPane, BorderLayout.CENTER);
 
 //         JButton addButton = new JButton("Ajouter un ouvrage");
 //         JButton editButton = new JButton("Modifier");
 //         JButton deleteButton = new JButton("Supprimer");
 
+//         // Style des boutons
+//         Color btnColor = new Color(51, 102, 204);
+//         Font btnFont = new Font("Segoe UI", Font.BOLD, 15);
+//         for (JButton btn : new JButton[]{addButton, editButton, deleteButton}) {
+//             btn.setBackground(btnColor);
+//             btn.setForeground(Color.WHITE);
+//             btn.setFocusPainted(false);
+//             btn.setFont(btnFont);
+//             btn.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
+//         }
+
 //         addButton.addActionListener(_ -> ajouterOuvrage());
 //         editButton.addActionListener(_ -> modifierOuvrage());
 //         deleteButton.addActionListener(_ -> supprimerOuvrage());
 
 //         JPanel buttonPanel = new JPanel();
+//         buttonPanel.setBackground(new Color(245, 245, 250));
+//         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 15));
 //         buttonPanel.add(addButton);
 //         buttonPanel.add(editButton);
 //         buttonPanel.add(deleteButton);
 //         add(buttonPanel, BorderLayout.SOUTH);
+
+//         // Titre en haut
+//         JLabel titre = new JLabel("Gestion des Ouvrages");
+//         titre.setFont(new Font("Segoe UI", Font.BOLD, 22));
+//         titre.setForeground(new Color(51, 102, 204));
+//         titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
+//         titre.setHorizontalAlignment(SwingConstants.CENTER);
+//         add(titre, BorderLayout.NORTH);
 //     }
 
 //     private void loadOuvrages() {
@@ -783,5 +807,115 @@
 //             e.printStackTrace();
 //             throw new RuntimeException("Erreur lors de la mise à jour", e);
 //         }
+//     }
+// }
+
+
+
+
+
+// package sn.Fama_Taha.view;
+
+// import javax.swing.*;
+// import java.awt.*;
+
+// public class LayoutAvecMenuExemple extends JFrame {
+
+//     public LayoutAvecMenuExemple() {
+//         setTitle("Gestion de Bibliothèque");
+//         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//         setSize(900, 650);
+//         setLocationRelativeTo(null);
+
+//         // Définir une police personnalisée
+//         Font fontTitre = new Font("Segoe UI", Font.BOLD, 28);
+//         Font fontMenu = new Font("Segoe UI", Font.PLAIN, 16);
+
+//         // Barre de menu stylisée
+//         JMenuBar menuBar = new JMenuBar();
+//         menuBar.setBackground(new Color(44, 62, 80));
+//         menuBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+//         // Menu Membres
+//         JMenu menuMembre = new JMenu("Membres");
+//         menuMembre.setForeground(Color.WHITE);
+//         menuMembre.setFont(fontMenu);
+//         JMenuItem itemListerMembres = new JMenuItem("Lister les membres");
+//         JMenuItem itemAjouterMembre = new JMenuItem("Ajouter un membre");
+//         menuMembre.add(itemListerMembres);
+//         menuMembre.add(itemAjouterMembre);
+
+//         // Menu Ouvrages
+//         JMenu menuOuvrage = new JMenu("Ouvrages");
+//         menuOuvrage.setForeground(Color.WHITE);
+//         menuOuvrage.setFont(fontMenu);
+//         JMenuItem itemListerOuvrages = new JMenuItem("Lister les ouvrages");
+//         JMenuItem itemAjouterOuvrage = new JMenuItem("Ajouter un ouvrage");
+//         menuOuvrage.add(itemListerOuvrages);
+//         menuOuvrage.add(itemAjouterOuvrage);
+
+//         // Menu Emprunts
+//         JMenu menuEmprunt = new JMenu("Emprunts");
+//         menuEmprunt.setForeground(Color.WHITE);
+//         menuEmprunt.setFont(fontMenu);
+//         JMenuItem itemListerEmprunts = new JMenuItem("Lister les emprunts");
+//         menuEmprunt.add(itemListerEmprunts);
+
+//         // Menu Réservations
+//         JMenu menuReservation = new JMenu("Réservations");
+//         menuReservation.setForeground(Color.WHITE);
+//         menuReservation.setFont(fontMenu);
+//         JMenuItem itemListerReservations = new JMenuItem("Lister les réservations");
+//         menuReservation.add(itemListerReservations);
+
+//         // Ajout des menus à la barre
+//         menuBar.add(menuMembre);
+//         menuBar.add(menuOuvrage);
+//         menuBar.add(menuEmprunt);
+//         menuBar.add(menuReservation);
+
+//         setJMenuBar(menuBar);
+
+//         // Panel principal avec fond
+//         JPanel mainPanel = new JPanel(new BorderLayout());
+//         mainPanel.setBackground(new Color(236, 240, 241));
+//         add(mainPanel);
+
+//         // En-tête stylisé
+//         JPanel headerPanel = new JPanel();
+//         headerPanel.setBackground(new Color(52, 152, 219));
+//         JLabel titre = new JLabel("Bienvenue dans la Gestion de Bibliothèque");
+//         titre.setForeground(Color.WHITE);
+//         titre.setFont(fontTitre);
+//         headerPanel.add(titre);
+//         mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+//         // Panel de contenu (pour changer selon le menu)
+//         JPanel contentPanel = new JPanel(new BorderLayout());
+//         contentPanel.setOpaque(false);
+//         mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+//         // Actions des menus
+//         itemListerMembres.addActionListener(_ -> {
+//             contentPanel.removeAll();
+//             contentPanel.add(new MembreView(), BorderLayout.CENTER);
+//             contentPanel.revalidate();
+//             contentPanel.repaint();
+//         });
+//         itemListerOuvrages.addActionListener(_ -> {
+//             contentPanel.removeAll();
+//             contentPanel.add(new OuvrageView(), BorderLayout.CENTER);
+//             contentPanel.revalidate();
+//             contentPanel.repaint();
+//         });
+//         // Ajoutez les autres actions ici...
+
+//         // Message d'accueil par défaut
+//         JLabel accueil = new JLabel("<html><center><h2>Bienvenue !</h2><br/>Sélectionnez une option dans le menu pour commencer.</center></html>", SwingConstants.CENTER);
+//         accueil.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+//         accueil.setForeground(new Color(44, 62, 80));
+//         contentPanel.add(accueil, BorderLayout.CENTER);
+
+//         setVisible(true);
 //     }
 // }

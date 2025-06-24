@@ -1,9 +1,3 @@
-
-
-
-
-
-
 package sn.Fama_Taha.view;
 
 import javax.swing.*;
