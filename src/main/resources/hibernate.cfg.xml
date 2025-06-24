@@ -11,12 +11,16 @@
         <property name="hibernate.connection.password">passer</property>
 
         <!-- Dialecte SQL pour PostgreSQL -->
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
-        <!-- Options supplémentaires -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
+
         <!-- MAPPINGS -->
-        <!-- <mapping class="sn.Fama_Taha.entite.Participant"/> -->
+        <mapping class="sn.Fama_Taha.entity.Administrateur"/>
+        <mapping class="sn.Fama_Taha.entity.Emprunt"/>
+        <mapping class="sn.Fama_Taha.entity.Membre"/>
+        <mapping class="sn.Fama_Taha.entity.Ouvrage"/>
+        <mapping class="sn.Fama_Taha.entity.Reservation"/>
     </session-factory>
 </hibernate-configuration>

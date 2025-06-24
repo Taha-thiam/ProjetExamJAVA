@@ -19,4 +19,8 @@ public class Administrateur {
     private String login;
     @Column(name = "password", length = 100)
     private String password;
+      public String getLogin() {
+        return login;
+    }
+    
 }

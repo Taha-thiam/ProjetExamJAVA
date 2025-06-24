@@ -1,0 +1,319 @@
+// package sn.Fama_Taha.entity;
+
+// import jakarta.persistence.Column;
+// import jakarta.persistence.Entity;
+// import jakarta.persistence.Id;
+// import jakarta.persistence.Table;
+// import lombok.AllArgsConstructor;
+// import lombok.Getter;
+// import lombok.NoArgsConstructor;
+// import lombok.Setter;
+
+// @Entity @Getter 
+// @Setter @AllArgsConstructor @NoArgsConstructor 
+// @Table(name = "Administrateurs")
+
+// public class Administrateur {
+//     @Id
+//     @Column(name = "login",length = 50)
+//     private String login;
+//     @Column(name = "password", length = 100)
+//     private String password;
+//       public String getLogin() {
+//         return login;
+//     }
+    
+// }
+
+
+// package sn.Fama_Taha.entity;
+
+// import jakarta.persistence.*;
+// import lombok.AllArgsConstructor;
+// import lombok.Getter;
+// import lombok.NoArgsConstructor;
+// import lombok.Setter;
+// import java.time.LocalDate;
+
+// @Entity
+// @Getter
+// @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Table(name = "emprunt")
+// public class Emprunt {
+//     @Id
+//     @Column(name = "id_emprunt")
+//     private String idEmprunt;
+
+//     @Column(name = "date_emprunt", nullable = false)
+//     private LocalDate dateEmprunt;
+
+//     @Column(name = "date_retour_prevue", nullable = false)
+//     private LocalDate dateRetourPrevue;
+
+//     @Column(name = "date_retour_reelle")
+//     private LocalDate dateRetourReelle;
+
+//     @ManyToOne
+//     @JoinColumn(name = "id_membre", nullable = false)
+//     private Membre membre;
+
+//     // Exemple : si vous avez une entité Livre
+//     // @ManyToOne
+//     // @JoinColumn(name = "id_livre", nullable = false)
+//     // private Livre livre;
+// }
+
+
+// package sn.Fama_Taha.entity;
+
+// import jakarta.persistence.*;
+// import lombok.AllArgsConstructor;package sn.Fama_Taha.exception;
+
+
+// import lombok.Getter;
+// import lombok.NoArgsConstructor;
+// import lombok.Setter;
+
+// @Entity @Getter
+// @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Table(name = "membre")
+// public class Membre {
+//     @Id
+//     @Column(name ="id_membre")
+//     private String nom;
+//     @Column(name = "nom",length = 100,nullable = false)
+//     private String prenom;
+//     @Column(name = "prenom",length = 100,nullable = false)
+//     private String email;
+//     private String telephone;
+//     private String typeMembre;
+//     // @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//     @JoinTable(name = "membre_administrateur",
+//             joinColumns = @JoinColumn(name = "id_membre"),
+//             inverseJoinColumns = @JoinColumn(name = "createur_login"))
+//     @ManyToOne(fetch = FetchType.LAZY)
+//     private Administrateur createur;
+
+// }
+
+
+
+// package sn.Fama_Taha.entity;
+
+// import jakarta.persistence.*;
+// import lombok.AllArgsConstructor;
+// import lombok.Getter;
+// import lombok.NoArgsConstructor;
+// import lombok.Setter;
+
+// @Entity
+// @Getter
+// @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Table(name = "ouvrage")
+// public class Ouvrage {
+//     @Id
+//     @Column(name = "id_ouvrage")
+//     private String idOuvrage;
+
+//     @Column(name = "titre", nullable = false, length = 200)
+//     private String titre;
+
+//     @Column(name = "auteur", nullable = false, length = 100)
+//     private String auteur;
+
+//     @Column(name = "annee_publication")
+//     private int anneePublication;
+
+//     @Column(name = "genre", length = 50)
+//     private String genre;
+
+//     @Column(name = "disponible")
+//     private boolean disponible;
+// }
+
+
+// package sn.Fama_Taha.entity;
+
+// import jakarta.persistence.*;
+// import lombok.AllArgsConstructor;
+// import lombok.Getter;
+// import lombok.NoArgsConstructor;
+// import lombok.Setter;
+// import java.time.LocalDate;
+
+// @Entity
+// @Getter
+// @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Table(name = "reservation")
+// public class Reservation {
+//     @Id
+//     @Column(name = "id_reservation")
+//     private String idReservation;
+
+//     @Column(name = "date_reservation", nullable = false)
+//     private LocalDate dateReservation;
+
+//     @ManyToOne
+//     @JoinColumn(name = "id_membre", nullable = false)
+//     private Membre membre;
+
+//     @ManyToOne
+//     @JoinColumn(name = "id_ouvrage", nullable = false)
+//     private Ouvrage ouvrage;
+// }
+
+
+
+// package sn.Fama_Taha.exception;
+
+
+// public class AdministrateurNotFoundException extends Exception {
+
+//     public AdministrateurNotFoundException() {
+//         super(" login ou mot de passe incorrect");
+//     }
+//     public AdministrateurNotFoundException(String message) {
+//         super(message);
+//     }
+// }
+ 
+
+
+
+
+// package sn.Fama_Taha.exception;
+
+// public class MembreNotFoundException extends Exception {
+//     public MembreNotFoundException() {
+//         super("Membre non trouvé");
+//     }
+
+//     public MembreNotFoundException(String message) {
+//         super(message);
+//     }
+// }
+
+
+
+// package sn.Fama_Taha.repository;
+
+// import java.util.List;
+
+// import sn.Fama_Taha.entity.Membre;
+
+// public interface IMembreRepository {
+//     List<Membre> findAll();
+//     Membre findById(String idMembre);
+//     Membre save(Membre membre);
+//     void delete(Membre membre);
+//     Membre update(Membre membre);
+// }
+
+
+
+
+// package sn.Fama_Taha.exception;
+
+// public class ServeurException extends Exception {
+
+//     public ServeurException() {
+//         super("Erreur de connexion au serveur");
+//     }
+
+//     public ServeurException(String message) {
+//         super(message);
+//     }
+// }
+
+
+
+
+
+
+
+// package sn.Fama_Taha.repository;
+
+// import org.hibernate.Session;
+// import org.hibernate.Transaction;
+
+// import sn.Fama_Taha.config.HibernateUtils;
+// import sn.Fama_Taha.entity.Membre;
+// import java.util.List;
+
+
+
+
+// public class MembreRepository implements IMembreRepository {
+
+//     @Override
+//     public List<Membre> findAll() {
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             return session.createQuery("from Membre", Membre.class).getResultList();
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur de recherche", e);
+//         }
+//     }
+
+//     @Override
+//     public Membre findById(String idMembre) {
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             return session.find(Membre.class, idMembre);
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur de recherche", e);
+//         }
+//     }
+
+//     @Override
+//     public Membre save(Membre membre) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             session.persist(membre);
+//             tx.commit();
+//             return membre;
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de l'enregistrement", e);
+//         }
+//     }
+
+//     @Override
+//     public void delete(Membre membre) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             session.remove(membre);
+//             tx.commit();
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de la suppression", e);
+//         }
+//     }
+
+//     @Override
+//     public Membre update(Membre membre) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             Membre updated = (Membre) session.merge(membre);
+//             tx.commit();
+//             return updated;
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de la mise à jour", e);
+//         }
+//     }
+// }

@@ -21,8 +21,11 @@ public class Membre {
     private String email;
     private String telephone;
     private String typeMembre;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "createur_login")
+    // @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "membre_administrateur",
+            joinColumns = @JoinColumn(name = "id_membre"),
+            inverseJoinColumns = @JoinColumn(name = "createur_login"))
+    @ManyToOne(fetch = FetchType.LAZY)
     private Administrateur createur;
 
 }
