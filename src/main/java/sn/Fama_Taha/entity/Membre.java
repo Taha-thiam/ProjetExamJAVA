@@ -6,26 +6,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity @Getter
+@Entity
+@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "membre")
 public class Membre {
     @Id
-    @Column(name ="id_membre")
+    @Column(name = "id_membre")
+    private String idMembre;
+
+    @Column(name = "nom", length = 100, nullable = false)
     private String nom;
-    @Column(name = "nom",length = 100,nullable = false)
+
+    @Column(name = "prenom", length = 100, nullable = false)
     private String prenom;
-    @Column(name = "prenom",length = 100,nullable = false)
+
+    @Column(name = "email", length = 100, nullable = false)
     private String email;
+
     private String telephone;
     private String typeMembre;
-    // @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "membre_administrateur",
-            joinColumns = @JoinColumn(name = "id_membre"),
-            inverseJoinColumns = @JoinColumn(name = "createur_login"))
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Administrateur createur;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createur_login")
+    private Administrateur createur;
 }

@@ -1,3 +1,9 @@
+
+
+
+
+
+
 package sn.Fama_Taha.view;
 
 import javax.swing.*;
@@ -84,23 +90,31 @@ public class LoginView extends JFrame {
         loginButton.addActionListener(_ -> SeConnecter());
     }
 
-    private void SeConnecter() {
-        String login = loginField.getText();
-        String password = new String(passwordField.getPassword());
-        try {
-            Administrateur administrateur = authRepository.login(login, password);
-            errorMessage.setText("Bienvenue, " + administrateur.getLogin() + " !");
-            errorMessage.setForeground(new Color(39, 174, 96));
-            errorMessage.setVisible(true);
-            // Ouvrir la fenêtre principale ou autre action
-        } catch (AdministrateurNotFoundException e) {
-            errorMessage.setText(e.getMessage());
-            errorMessage.setForeground(Color.RED);
-            errorMessage.setVisible(true);
-        } catch (Exception e) {
-            errorMessage.setText("Erreur technique : " + e.getMessage());
-            errorMessage.setForeground(Color.RED);
-            errorMessage.setVisible(true);
-        }
+   // ...existing code...
+private void SeConnecter() {
+    String login = loginField.getText();
+    String password = new String(passwordField.getPassword());
+    try {
+        Administrateur administrateur = authRepository.login(login, password);
+        errorMessage.setText("Bienvenue, " + administrateur.getLogin() + " !");
+        errorMessage.setForeground(new Color(39, 174, 96));
+        errorMessage.setVisible(true);
+
+        // Ouvrir la fenêtre principale et fermer la fenêtre de login
+        SwingUtilities.invokeLater(() -> {
+            new LayoutAvecMenuExemple(); // Affiche la fenêtre principale
+            this.dispose(); // Ferme la fenêtre de login
+        });
+
+    } catch (AdministrateurNotFoundException e) {
+        errorMessage.setText(e.getMessage());
+        errorMessage.setForeground(Color.RED);
+        errorMessage.setVisible(true);
+    } catch (Exception e) {
+        errorMessage.setText("Erreur technique : " + e.getMessage());
+        errorMessage.setForeground(Color.RED);
+        errorMessage.setVisible(true);
     }
+}
+// ...existing code...
 }

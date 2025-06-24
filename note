@@ -66,40 +66,44 @@
 // }
 
 
+
+
+
 // package sn.Fama_Taha.entity;
 
 // import jakarta.persistence.*;
-// import lombok.AllArgsConstructor;package sn.Fama_Taha.exception;
-
-
+// import lombok.AllArgsConstructor;
 // import lombok.Getter;
 // import lombok.NoArgsConstructor;
 // import lombok.Setter;
 
-// @Entity @Getter
+// @Entity
+// @Getter
 // @Setter
 // @NoArgsConstructor
 // @AllArgsConstructor
 // @Table(name = "membre")
 // public class Membre {
 //     @Id
-//     @Column(name ="id_membre")
+//     @Column(name = "id_membre")
+//     private String idMembre;
+
+//     @Column(name = "nom", length = 100, nullable = false)
 //     private String nom;
-//     @Column(name = "nom",length = 100,nullable = false)
+
+//     @Column(name = "prenom", length = 100, nullable = false)
 //     private String prenom;
-//     @Column(name = "prenom",length = 100,nullable = false)
+
+//     @Column(name = "email", length = 100, nullable = false)
 //     private String email;
+
 //     private String telephone;
 //     private String typeMembre;
-//     // @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//     @JoinTable(name = "membre_administrateur",
-//             joinColumns = @JoinColumn(name = "id_membre"),
-//             inverseJoinColumns = @JoinColumn(name = "createur_login"))
+
 //     @ManyToOne(fetch = FetchType.LAZY)
+//     @JoinColumn(name = "createur_login")
 //     private Administrateur createur;
-
 // }
-
 
 
 // package sn.Fama_Taha.entity;
@@ -308,6 +312,470 @@
 //         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
 //             tx = session.beginTransaction();
 //             Membre updated = (Membre) session.merge(membre);
+//             tx.commit();
+//             return updated;
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de la mise à jour", e);
+//         }
+//     }
+// }
+
+
+
+
+// package sn.Fama_Taha.view;
+
+// import javax.swing.*;
+// import sn.Fama_Taha.exception.AdministrateurNotFoundException;
+// import sn.Fama_Taha.entity.Administrateur;
+// import sn.Fama_Taha.repository.AuthRepository;
+// import java.awt.*;
+
+// public class LoginView extends JFrame {
+//     private JTextField loginField;
+//     private JPasswordField passwordField;
+//     private JButton loginButton;
+//     private JLabel errorMessage;
+//     private final AuthRepository authRepository = new AuthRepository();
+
+//     public LoginView() {
+//         setTitle("Connexion Administrateur");
+//         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//         setSize(400, 300);
+//         setLocationRelativeTo(null);
+//         setResizable(false);
+
+//         // Panel principal avec padding
+//         JPanel mainPanel = new JPanel(new BorderLayout());
+//         mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+//         mainPanel.setBackground(new Color(245, 245, 250));
+
+//         // Titre
+//         JLabel title = new JLabel("Connexion", SwingConstants.CENTER);
+//         title.setFont(new Font("Arial", Font.BOLD, 22));
+//         title.setForeground(new Color(44, 62, 80));
+//         mainPanel.add(title, BorderLayout.NORTH);
+
+//         // Formulaire
+//         JPanel formPanel = new JPanel(new GridBagLayout());
+//         formPanel.setOpaque(false);
+//         GridBagConstraints gbc = new GridBagConstraints();
+//         gbc.insets = new Insets(10, 10, 10, 10);
+//         gbc.fill = GridBagConstraints.HORIZONTAL;
+
+//         JLabel loginLabel = new JLabel("Login :");
+//         loginLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+//         gbc.gridx = 0; gbc.gridy = 0;
+//         formPanel.add(loginLabel, gbc);
+
+//         loginField = new JTextField();
+//         loginField.setFont(new Font("Arial", Font.PLAIN, 15));
+//         gbc.gridx = 1; gbc.gridy = 0;
+//         formPanel.add(loginField, gbc);
+
+//         JLabel passwordLabel = new JLabel("Mot de passe :");
+//         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+//         gbc.gridx = 0; gbc.gridy = 1;
+//         formPanel.add(passwordLabel, gbc);
+
+//         passwordField = new JPasswordField();
+//         passwordField.setFont(new Font("Arial", Font.PLAIN, 15));
+//         gbc.gridx = 1; gbc.gridy = 1;
+//         formPanel.add(passwordField, gbc);
+
+//         // Bouton Se connecter
+//         loginButton = new JButton("Se connecter");
+//         loginButton.setFont(new Font("Arial", Font.BOLD, 15));
+//         loginButton.setBackground(new Color(52, 152, 219));
+//         loginButton.setForeground(Color.WHITE);
+//         loginButton.setFocusPainted(false);
+//         loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//         loginButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+//         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+//         formPanel.add(loginButton, gbc);
+
+//         mainPanel.add(formPanel, BorderLayout.CENTER);
+
+//         // Message d'erreur
+//         errorMessage = new JLabel("", SwingConstants.CENTER);
+//         errorMessage.setFont(new Font("Arial", Font.PLAIN, 13));
+//         errorMessage.setForeground(Color.RED);
+//         errorMessage.setVisible(false);
+//         mainPanel.add(errorMessage, BorderLayout.SOUTH);
+
+//         add(mainPanel);
+//         setVisible(true);
+
+//         loginButton.addActionListener(_ -> SeConnecter());
+//     }
+
+//     private void SeConnecter() {
+//         String login = loginField.getText();
+//         String password = new String(passwordField.getPassword());
+//         try {
+//             Administrateur administrateur = authRepository.login(login, password);
+//             errorMessage.setText("Bienvenue, " + administrateur.getLogin() + " !");
+//             errorMessage.setForeground(new Color(39, 174, 96));
+//             errorMessage.setVisible(true);
+//             // Ouvrir la fenêtre principale ou autre action
+//         } catch (AdministrateurNotFoundException e) {
+//             errorMessage.setText(e.getMessage());
+//             errorMessage.setForeground(Color.RED);
+//             errorMessage.setVisible(true);
+//         } catch (Exception e) {
+//             errorMessage.setText("Erreur technique : " + e.getMessage());
+//             errorMessage.setForeground(Color.RED);
+//             errorMessage.setVisible(true);
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// package sn.Fama_Taha.view;
+
+// import javax.swing.*;
+// import java.awt.*;
+
+
+
+// public class LayoutAvecMenuExemple extends JFrame {
+
+//     public LayoutAvecMenuExemple() {
+//         setTitle("Gestion de Bibliothèque");
+//         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//         setSize(800, 600);
+//         setLocationRelativeTo(null);
+
+//         // Barre de menu
+//         JMenuBar menuBar = new JMenuBar();
+
+//         // Menu Membres
+//         JMenu menuMembre = new JMenu("Membres");
+//         JMenuItem itemListerMembres = new JMenuItem("Lister les membres");
+//         JMenuItem itemAjouterMembre = new JMenuItem("Ajouter un membre");
+//         menuMembre.add(itemListerMembres);
+//         menuMembre.add(itemAjouterMembre);
+
+//         // Menu Ouvrages
+//         JMenu menuOuvrage = new JMenu("Ouvrages");
+//         JMenuItem itemListerOuvrages = new JMenuItem("Lister les ouvrages");
+//         JMenuItem itemAjouterOuvrage = new JMenuItem("Ajouter un ouvrage");
+//         menuOuvrage.add(itemListerOuvrages);
+//         menuOuvrage.add(itemAjouterOuvrage);
+
+//         // Menu Emprunts
+//         JMenu menuEmprunt = new JMenu("Emprunts");
+//         JMenuItem itemListerEmprunts = new JMenuItem("Lister les emprunts");
+//         menuEmprunt.add(itemListerEmprunts);
+
+//         // Menu Réservations
+//         JMenu menuReservation = new JMenu("Réservations");
+//         JMenuItem itemListerReservations = new JMenuItem("Lister les réservations");
+//         menuReservation.add(itemListerReservations);
+
+//         // Ajout des menus à la barre
+//         menuBar.add(menuMembre);
+//         menuBar.add(menuOuvrage);
+//         menuBar.add(menuEmprunt);
+//         menuBar.add(menuReservation);
+
+//         setJMenuBar(menuBar);
+
+//         // Panel principal (pour afficher les vues selon le menu)
+//         JPanel mainPanel = new JPanel(new BorderLayout());
+//         add(mainPanel);
+
+//         // Actions (exemple)
+//         itemListerMembres.addActionListener(_ -> {
+//             mainPanel.removeAll();
+//             mainPanel.add(new JLabel("Liste des membres (à implémenter)"), BorderLayout.CENTER);
+//             mainPanel.revalidate();
+//             mainPanel.repaint();
+//         });
+
+//         itemListerOuvrages.addActionListener(_ -> {
+//             mainPanel.removeAll();
+//             mainPanel.add(new JLabel("Liste des ouvrages (à implémenter)"), BorderLayout.CENTER);
+//             mainPanel.revalidate();
+//             mainPanel.repaint();
+//         });
+
+//         // ... Ajouter d'autres actions selon les besoins
+
+//         setVisible(true);
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// package sn.Fama_Taha.view;
+
+// import sn.Fama_Taha.entity.Membre;
+// import sn.Fama_Taha.repository.MembreRepository;
+
+// import javax.swing.*;
+// import javax.swing.table.DefaultTableModel;
+// import java.awt.*;
+// import java.util.List;
+
+// public class MembreView extends JPanel {
+//     private JTable membreTable;
+//     private DefaultTableModel tableModel;
+//     private MembreRepository membreRepository = new MembreRepository();
+
+//     public MembreView() {
+//         setLayout(new BorderLayout());
+
+//         // Colonnes du tableau (sans "Créateur")
+//         String[] columns = {"ID", "Nom", "Prénom", "Email", "Téléphone", "Type"};
+//         tableModel = new DefaultTableModel(columns, 0);
+//         membreTable = new JTable(tableModel);
+
+//         // Chargement des membres
+//         loadMembres();
+
+//         JScrollPane scrollPane = new JScrollPane(membreTable);
+//         add(scrollPane, BorderLayout.CENTER);
+
+//         // Boutons
+//         JButton addButton = new JButton("Ajouter un membre");
+//         JButton editButton = new JButton("Modifier");
+//         JButton deleteButton = new JButton("Supprimer");
+
+//         addButton.addActionListener(_ -> ajouterMembre());
+//         editButton.addActionListener(_ -> modifierMembre());
+//         deleteButton.addActionListener(_ -> supprimerMembre());
+
+//         JPanel buttonPanel = new JPanel();
+//         buttonPanel.add(addButton);
+//         buttonPanel.add(editButton);
+//         buttonPanel.add(deleteButton);
+//         add(buttonPanel, BorderLayout.SOUTH);
+//     }
+
+//     private void loadMembres() {
+//         tableModel.setRowCount(0); // Clear
+//         List<Membre> membres = membreRepository.findAll();
+//         for (Membre m : membres) {
+//             tableModel.addRow(new Object[]{
+//                 m.getIdMembre(),
+//                 m.getNom(),
+//                 m.getPrenom(),
+//                 m.getEmail(),
+//                 m.getTelephone(),
+//                 m.getTypeMembre()
+//             });
+//         }
+//     }
+
+//     private void ajouterMembre() {
+//         JOptionPane.showMessageDialog(this, "Fonctionnalité d'ajout à implémenter.");
+//     }
+
+//     private void modifierMembre() {
+//         int selectedRow = membreTable.getSelectedRow();
+//         if (selectedRow == -1) {
+//             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un membre à modifier.");
+//             return;
+//         }
+//         JOptionPane.showMessageDialog(this, "Fonctionnalité de modification à implémenter.");
+//     }
+
+//     private void supprimerMembre() {
+//         int selectedRow = membreTable.getSelectedRow();
+//         if (selectedRow == -1) {
+//             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un membre à supprimer.");
+//             return;
+//         }
+//         int confirm = JOptionPane.showConfirmDialog(this, "Voulez-vous vraiment supprimer ce membre ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+//         if (confirm == JOptionPane.YES_OPTION) {
+//             Object idObj = tableModel.getValueAt(selectedRow, 0);
+//             if (idObj != null) {
+//                 Long id = Long.valueOf(idObj.toString());
+//                 membreRepository.delete(membreRepository.findById(id.toString()));
+//                 loadMembres();
+//             }
+//         }
+//     }
+// }
+
+
+
+
+// package sn.Fama_Taha.view;
+// import sn.Fama_Taha.entity.Ouvrage;
+// import sn.Fama_Taha.repository.OuvrageRepository;
+// import javax.swing.*;
+// import javax.swing.table.DefaultTableModel;
+// import java.awt.*;
+// import java.util.List;
+
+
+
+
+
+// public class OuvrageView extends JPanel {
+//     private JTable ouvrageTable;
+//     private DefaultTableModel tableModel;
+//     private OuvrageRepository ouvrageRepository = new OuvrageRepository();
+
+//     public OuvrageView() {
+//         setLayout(new BorderLayout());
+
+//         String[] columns = {"ID", "Titre", "Auteur", "Année", "Genre", "Disponible"};
+//         tableModel = new DefaultTableModel(columns, 0);
+//         ouvrageTable = new JTable(tableModel);
+
+//         loadOuvrages();
+
+//         JScrollPane scrollPane = new JScrollPane(ouvrageTable);
+//         add(scrollPane, BorderLayout.CENTER);
+
+//         JButton addButton = new JButton("Ajouter un ouvrage");
+//         JButton editButton = new JButton("Modifier");
+//         JButton deleteButton = new JButton("Supprimer");
+
+//         addButton.addActionListener(_ -> ajouterOuvrage());
+//         editButton.addActionListener(_ -> modifierOuvrage());
+//         deleteButton.addActionListener(_ -> supprimerOuvrage());
+
+//         JPanel buttonPanel = new JPanel();
+//         buttonPanel.add(addButton);
+//         buttonPanel.add(editButton);
+//         buttonPanel.add(deleteButton);
+//         add(buttonPanel, BorderLayout.SOUTH);
+//     }
+
+//     private void loadOuvrages() {
+//         tableModel.setRowCount(0);
+//         List<Ouvrage> ouvrages = ouvrageRepository.findAll();
+//         for (Ouvrage o : ouvrages) {
+//             tableModel.addRow(new Object[]{
+//                 o.getIdOuvrage(),
+//                 o.getTitre(),
+//                 o.getAuteur(),
+//                 o.getAnneePublication(),
+//                 o.getGenre(),
+//                 o.isDisponible() ? "Oui" : "Non"
+//             });
+//         }
+//     }
+
+//     private void ajouterOuvrage() {
+//         JOptionPane.showMessageDialog(this, "Fonctionnalité d'ajout à implémenter.");
+//     }
+
+//     private void modifierOuvrage() {
+//         int selectedRow = ouvrageTable.getSelectedRow();
+//         if (selectedRow == -1) {
+//             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à modifier.");
+//             return;
+//         }
+//         JOptionPane.showMessageDialog(this, "Fonctionnalité de modification à implémenter.");
+//     }
+
+//     private void supprimerOuvrage() {
+//         int selectedRow = ouvrageTable.getSelectedRow();
+//         if (selectedRow == -1) {
+//             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à supprimer.");
+//             return;
+//         }
+//         int confirm = JOptionPane.showConfirmDialog(this, "Voulez-vous vraiment supprimer cet ouvrage ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+//         if (confirm == JOptionPane.YES_OPTION) {
+//             Object idObj = tableModel.getValueAt(selectedRow, 0);
+//             if (idObj != null) {
+//                 ouvrageRepository.delete(ouvrageRepository.findById(idObj.toString()));
+//                 loadOuvrages();
+//             }
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// package sn.Fama_Taha.repository;
+
+// import org.hibernate.Session;
+// import org.hibernate.Transaction;
+// import sn.Fama_Taha.config.HibernateUtils;
+// import sn.Fama_Taha.entity.Ouvrage;
+// import java.util.List;
+
+
+
+// public class OuvrageRepository {
+
+//     public List<Ouvrage> findAll() {
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             return session.createQuery("from Ouvrage", Ouvrage.class).getResultList();
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur de recherche", e);
+//         }
+//     }
+
+//     public Ouvrage findById(String idOuvrage) {
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             return session.find(Ouvrage.class, idOuvrage);
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur de recherche", e);
+//         }
+//     }
+
+//     public Ouvrage save(Ouvrage ouvrage) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             session.persist(ouvrage);
+//             tx.commit();
+//             return ouvrage;
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de l'enregistrement", e);
+//         }
+//     }
+
+//     public void delete(Ouvrage ouvrage) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             session.remove(ouvrage);
+//             tx.commit();
+//         } catch (Exception e) {
+//             if (tx != null) tx.rollback();
+//             e.printStackTrace();
+//             throw new RuntimeException("Erreur lors de la suppression", e);
+//         }
+//     }
+
+//     public Ouvrage update(Ouvrage ouvrage) {
+//         Transaction tx = null;
+//         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+//             tx = session.beginTransaction();
+//             Ouvrage updated = (Ouvrage) session.merge(ouvrage);
 //             tx.commit();
 //             return updated;
 //         } catch (Exception e) {
