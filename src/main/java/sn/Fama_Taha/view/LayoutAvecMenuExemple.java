@@ -104,6 +104,12 @@ public class LayoutAvecMenuExemple extends JFrame {
             contentPanel.revalidate();
             contentPanel.repaint();
         });
+        itemListerEmprunts.addActionListener(_ -> {
+            contentPanel.removeAll();
+            contentPanel.add(new EmpruntView(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
         // Ajoutez les autres actions ici...
 
         // Affichage de la page d'accueil par défaut au lancement

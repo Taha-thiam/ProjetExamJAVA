@@ -1,4 +1,5 @@
 package sn.Fama_Taha.view;
+
 import sn.Fama_Taha.entity.Ouvrage;
 import sn.Fama_Taha.repository.OuvrageRepository;
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class OuvrageView extends JPanel {
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 250));
 
-        String[] columns = {"ID", "Titre", "Auteur", "Année", "Genre", "Disponible"};
+        String[] columns = { "ID", "Titre", "Auteur", "Année", "Genre", "Disponible" };
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -37,7 +38,8 @@ public class OuvrageView extends JPanel {
         // Cellules alternées colorées
         ouvrageTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
                     c.setBackground(row % 2 == 0 ? new Color(235, 243, 255) : Color.WHITE);
@@ -61,7 +63,7 @@ public class OuvrageView extends JPanel {
         // Style des boutons
         Color btnColor = new Color(51, 102, 204);
         Font btnFont = new Font("Segoe UI", Font.BOLD, 15);
-        for (JButton btn : new JButton[]{addButton, editButton, deleteButton}) {
+        for (JButton btn : new JButton[] { addButton, editButton, deleteButton }) {
             btn.setBackground(btnColor);
             btn.setForeground(Color.WHITE);
             btn.setFocusPainted(false);
@@ -94,19 +96,56 @@ public class OuvrageView extends JPanel {
         tableModel.setRowCount(0);
         List<Ouvrage> ouvrages = ouvrageRepository.findAll();
         for (Ouvrage o : ouvrages) {
-            tableModel.addRow(new Object[]{
-                o.getIdOuvrage(),
-                o.getTitre(),
-                o.getAuteur(),
-                o.getAnneePublication(),
-                o.getGenre(),
-                o.isDisponible() ? "Oui" : "Non"
+            tableModel.addRow(new Object[] {
+                    o.getIdOuvrage(),
+                    o.getTitre(),
+                    o.getAuteur(),
+                    o.getAnneePublication(),
+                    o.getGenre(),
+                    o.isDisponible() ? "Oui" : "Non"
             });
         }
     }
 
     private void ajouterOuvrage() {
-        JOptionPane.showMessageDialog(this, "Fonctionnalité d'ajout à implémenter.");
+        JTextField idField = new JTextField();
+        JTextField titreField = new JTextField();
+        JTextField auteurField = new JTextField();
+        JTextField anneeField = new JTextField();
+        JTextField genreField = new JTextField();
+        JCheckBox disponibleBox = new JCheckBox("Disponible");
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("ID :"));
+        panel.add(idField);
+        panel.add(new JLabel("Titre :"));
+        panel.add(titreField);
+        panel.add(new JLabel("Auteur :"));
+        panel.add(auteurField);
+        panel.add(new JLabel("Année de publication :"));
+        panel.add(anneeField);
+        panel.add(new JLabel("Genre :"));
+        panel.add(genreField);
+        panel.add(disponibleBox);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Ajouter un ouvrage", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                Ouvrage ouvrage = new Ouvrage();
+                ouvrage.setIdOuvrage(idField.getText());
+                ouvrage.setTitre(titreField.getText());
+                ouvrage.setAuteur(auteurField.getText());
+                ouvrage.setAnneePublication(Integer.parseInt(anneeField.getText()));
+                ouvrage.setGenre(genreField.getText());
+                ouvrage.setDisponible(disponibleBox.isSelected());
+                ouvrageRepository.save(ouvrage);
+                loadOuvrages();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erreur lors de l'ajout : " + ex.getMessage(), "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void modifierOuvrage() {
@@ -115,7 +154,49 @@ public class OuvrageView extends JPanel {
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à modifier.");
             return;
         }
-        JOptionPane.showMessageDialog(this, "Fonctionnalité de modification à implémenter.");
+
+        // Récupérer les valeurs actuelles
+        String id = tableModel.getValueAt(selectedRow, 0).toString();
+        String titre = tableModel.getValueAt(selectedRow, 1).toString();
+        String auteur = tableModel.getValueAt(selectedRow, 2).toString();
+        String annee = tableModel.getValueAt(selectedRow, 3).toString();
+        String genre = tableModel.getValueAt(selectedRow, 4).toString();
+        boolean disponible = "Oui".equals(tableModel.getValueAt(selectedRow, 5).toString());
+
+        JTextField titreField = new JTextField(titre);
+        JTextField auteurField = new JTextField(auteur);
+        JTextField anneeField = new JTextField(annee);
+        JTextField genreField = new JTextField(genre);
+        JCheckBox disponibleBox = new JCheckBox("Disponible", disponible);
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Titre :"));
+        panel.add(titreField);
+        panel.add(new JLabel("Auteur :"));
+        panel.add(auteurField);
+        panel.add(new JLabel("Année de publication :"));
+        panel.add(anneeField);
+        panel.add(new JLabel("Genre :"));
+        panel.add(genreField);
+        panel.add(disponibleBox);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Modifier l'ouvrage", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                Ouvrage ouvrage = ouvrageRepository.findById(id);
+                ouvrage.setTitre(titreField.getText());
+                ouvrage.setAuteur(auteurField.getText());
+                ouvrage.setAnneePublication(Integer.parseInt(anneeField.getText()));
+                ouvrage.setGenre(genreField.getText());
+                ouvrage.setDisponible(disponibleBox.isSelected());
+                ouvrageRepository.update(ouvrage);
+                loadOuvrages();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erreur lors de la modification : " + ex.getMessage(), "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void supprimerOuvrage() {
@@ -124,7 +205,8 @@ public class OuvrageView extends JPanel {
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à supprimer.");
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this, "Voulez-vous vraiment supprimer cet ouvrage ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Voulez-vous vraiment supprimer cet ouvrage ?",
+                "Confirmation", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             Object idObj = tableModel.getValueAt(selectedRow, 0);
             if (idObj != null) {

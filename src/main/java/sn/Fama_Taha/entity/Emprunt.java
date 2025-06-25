@@ -31,8 +31,8 @@ public class Emprunt {
     @JoinColumn(name = "id_membre", nullable = false)
     private Membre membre;
 
-    // Exemple : si vous avez une entité Livre
-    // @ManyToOne
-    // @JoinColumn(name = "id_livre", nullable = false)
-    // private Livre livre;
+    @ManyToOne
+    @JoinColumn(name = "id_ouvrage", nullable = false)
+    private Ouvrage ouvrage;
+
 }

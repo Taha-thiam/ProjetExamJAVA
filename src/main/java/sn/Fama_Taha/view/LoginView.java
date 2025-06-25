@@ -41,21 +41,27 @@ public class LoginView extends JFrame {
         JLabel loginLabel = new JLabel("Login :");
         loginLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 0;
         formPanel.add(loginLabel, gbc);
 
         loginField = new JTextField();
         loginField.setFont(new Font("Arial", Font.PLAIN, 15));
+        loginField.setPreferredSize(new Dimension(200, 28)); // Largeur augmentée
         gbc.gridx = 1; gbc.gridy = 0;
+        gbc.weightx = 1;
         formPanel.add(loginField, gbc);
 
         JLabel passwordLabel = new JLabel("Mot de passe :");
         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 15));
         gbc.gridx = 0; gbc.gridy = 1;
+        gbc.weightx = 0;
         formPanel.add(passwordLabel, gbc);
 
         passwordField = new JPasswordField();
         passwordField.setFont(new Font("Arial", Font.PLAIN, 15));
+        passwordField.setPreferredSize(new Dimension(200, 28)); // Largeur augmentée
         gbc.gridx = 1; gbc.gridy = 1;
+        gbc.weightx = 1;
         formPanel.add(passwordField, gbc);
 
         // Bouton Se connecter

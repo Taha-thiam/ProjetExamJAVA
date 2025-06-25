@@ -22,5 +22,6 @@
         <mapping class="sn.Fama_Taha.entity.Membre"/>
         <mapping class="sn.Fama_Taha.entity.Ouvrage"/>
         <mapping class="sn.Fama_Taha.entity.Reservation"/>
+        <mapping class="sn.Fama_Taha.entity.Amende"/>
     </session-factory>
 </hibernate-configuration>
