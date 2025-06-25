@@ -24,9 +24,6 @@ public class Emprunt {
     @Column(name = "date_retour_prevue", nullable = false)
     private LocalDate dateRetourPrevue;
 
-    @Column(name = "date_retour_reelle")
-    private LocalDate dateRetourReelle;
-
     @ManyToOne
     @JoinColumn(name = "id_membre", nullable = false)
     private Membre membre;
@@ -35,4 +32,6 @@ public class Emprunt {
     @JoinColumn(name = "id_ouvrage", nullable = false)
     private Ouvrage ouvrage;
 
+    @Column(name = "retour_emprunt", nullable = false)
+    private boolean retourEmprunt;
 }
