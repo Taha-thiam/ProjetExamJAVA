@@ -34,4 +34,11 @@ public class Emprunt {
 
     @Column(name = "retour_emprunt", nullable = false)
     private boolean retourEmprunt;
+
+    @Column(name = "date_retour_reel")
+    private LocalDate dateRetourReel;
+
+    public void setDateRetourReel(LocalDate dateRetourReel) {
+        this.dateRetourReel = dateRetourReel;
+    }
 }

@@ -12,8 +12,9 @@ import java.time.LocalDate;
 @Table(name = "amende")
 public class Amende {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_amende")
-    private String idAmende;
+    private Integer idAmende;
 
     @Column(name = "montant", nullable = false)
     private double montant;

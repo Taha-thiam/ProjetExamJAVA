@@ -32,4 +32,10 @@ public class Ouvrage {
 
     @Column(name = "disponible")
     private boolean disponible;
+    public String getId() {
+    return this.idOuvrage;
+}
+
+    
+
 }

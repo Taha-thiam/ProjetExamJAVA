@@ -4,6 +4,8 @@ import sn.Fama_Taha.entity.Emprunt;
 import sn.Fama_Taha.entity.Membre;
 import sn.Fama_Taha.entity.Ouvrage;
 import sn.Fama_Taha.repository.EmpruntRepository;
+import sn.Fama_Taha.repository.OuvrageRepository;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -45,7 +47,8 @@ public class EmpruntView extends JPanel {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int column) {
-                if (column == 5) return null; // handled by button renderer
+                if (column == 5)
+                    return null; // handled by button renderer
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
                     c.setBackground(row % 2 == 0 ? new Color(230, 240, 255) : Color.WHITE);
@@ -288,6 +291,7 @@ public class EmpruntView extends JPanel {
         public ButtonRenderer() {
             setOpaque(true);
         }
+
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             setText(value != null && value.equals("Rendu") ? "Annuler retour" : "Valider retour");
@@ -303,6 +307,7 @@ public class EmpruntView extends JPanel {
         private String label;
         private int selectedRow;
 
+        // ...existing code...
         public ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
             button = new JButton();
@@ -312,21 +317,79 @@ public class EmpruntView extends JPanel {
                     fireEditingStopped();
                     String id = tableModel.getValueAt(selectedRow, 0).toString();
                     Emprunt emprunt = empruntRepository.findById(id);
+                    Ouvrage ouvrage = null;
+                    OuvrageRepository ouvrageRepository = new OuvrageRepository();
+                    if (emprunt != null && emprunt.getOuvrage() != null) {
+                        ouvrage = ouvrageRepository.findById(emprunt.getOuvrage().getId());
+                    }
+                    // ...dans actionPerformed...
                     if (emprunt != null) {
-                        emprunt.setRetourEmprunt(!emprunt.isRetourEmprunt());
+                        if (emprunt.isRetourEmprunt()) {
+                            emprunt.setRetourEmprunt(false);
+                            emprunt.setDateRetourReel(null);
+                            if (ouvrage != null) {
+                                ouvrage.setDisponible(false);
+                                ouvrageRepository.update(ouvrage);
+                            }
+                            empruntRepository.update(emprunt);
+                            loadEmprunts();
+                            return;
+                        }
+
+                        emprunt.setRetourEmprunt(true);
+                        java.time.LocalDate today = java.time.LocalDate.now();
+                        emprunt.setDateRetourReel(today);
+                        if (ouvrage != null) {
+                            ouvrage.setDisponible(true);
+                            ouvrageRepository.update(ouvrage);
+                        }
+
+                        int duree = 14;
+                        if (emprunt.getMembre() != null
+                                && "Professeur".equalsIgnoreCase(emprunt.getMembre().getTypeMembre())) {
+                            duree = 30;
+                        }
+                        java.time.LocalDate dateLimite = emprunt.getDateEmprunt().plusDays(duree);
+
+                        if (today.isAfter(dateLimite)) {
+                            long joursRetard = java.time.temporal.ChronoUnit.DAYS.between(dateLimite, today);
+                            double montant = joursRetard * 500;
+
+                            sn.Fama_Taha.repository.AmendeRepository amendeRepo = new sn.Fama_Taha.repository.AmendeRepository();
+                            boolean amendeExiste = amendeRepo.findAll().stream()
+                                    .anyMatch(a -> a.getMembre().getIdMembre().equals(emprunt.getMembre().getIdMembre())
+                                            && a.getDateAmende().equals(today)
+                                            && a.getRaison() != null
+                                            && a.getRaison().contains(emprunt.getIdEmprunt())); // Vérifie l'emprunt
+
+                            if (!amendeExiste) {
+                                sn.Fama_Taha.entity.Amende amende = new sn.Fama_Taha.entity.Amende();
+                                amende.setMontant(montant);
+                                amende.setDateAmende(today);
+                                amende.setRaison("Amende pour retard de " + joursRetard + " jour(s) sur l'emprunt "
+                                        + emprunt.getIdEmprunt());
+                                amende.setMembre(emprunt.getMembre());
+                                amendeRepo.save(amende);
+                                JOptionPane.showMessageDialog(button,
+                                        "Retour en retard ! Amende de " + montant + " FCFA générée.");
+                            }
+                        }
+
                         empruntRepository.update(emprunt);
                         loadEmprunts();
                     }
                 }
             });
         }
+        // ...existing code...
 
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected, int row, int column) {
             selectedRow = row;
             label = value != null && value.equals("Rendu") ? "Annuler retour" : "Valider retour";
             button.setText(label);
-            button.setBackground(value != null && value.equals("Rendu") ? new Color(241, 196, 15) : new Color(46, 204, 113));
+            button.setBackground(
+                    value != null && value.equals("Rendu") ? new Color(241, 196, 15) : new Color(46, 204, 113));
             button.setForeground(Color.WHITE);
             return button;
         }

@@ -27,6 +27,7 @@ public class OuvrageRepository {
             throw new RuntimeException("Erreur de recherche", e);
         }
     }
+    
 
     public Ouvrage save(Ouvrage ouvrage) {
         Transaction tx = null;
@@ -68,4 +69,8 @@ public class OuvrageRepository {
             throw new RuntimeException("Erreur lors de la mise à jour", e);
         }
     }
+    public Ouvrage findByIdOuvrage(String idOuvrage) {
+        return findById(idOuvrage);
+    }
+   
 }
