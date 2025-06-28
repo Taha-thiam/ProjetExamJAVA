@@ -177,8 +177,15 @@ public class EmpruntView extends JPanel {
                 emprunt.setDateEmprunt(java.time.LocalDate.parse(dateEmpruntField.getText()));
                 emprunt.setDateRetourPrevue(java.time.LocalDate.parse(dateRetourPrevueField.getText()));
                 emprunt.setMembre((Membre) membreBox.getSelectedItem());
-                emprunt.setOuvrage((Ouvrage) ouvrageBox.getSelectedItem());
+                Ouvrage ouvrage = (Ouvrage) ouvrageBox.getSelectedItem();
+                emprunt.setOuvrage(ouvrage);
                 emprunt.setRetourEmprunt(false); // Par défaut à false
+
+                // Mettre à jour la disponibilité de l'ouvrage
+                if (ouvrage != null) {
+                    ouvrage.setDisponible(false);
+                    new OuvrageRepository().update(ouvrage);
+                }
                 empruntRepository.save(emprunt);
                 loadEmprunts();
             } catch (Exception ex) {
@@ -320,7 +327,8 @@ public class EmpruntView extends JPanel {
                     Ouvrage ouvrage = null;
                     OuvrageRepository ouvrageRepository = new OuvrageRepository();
                     if (emprunt != null && emprunt.getOuvrage() != null) {
-                        ouvrage = ouvrageRepository.findById(emprunt.getOuvrage().getId());
+                        // Utilise getIdOuvrage() pour récupérer l'ouvrage par son id
+                        ouvrage = ouvrageRepository.findById(emprunt.getOuvrage().getIdOuvrage());
                     }
                     // ...dans actionPerformed...
                     if (emprunt != null) {

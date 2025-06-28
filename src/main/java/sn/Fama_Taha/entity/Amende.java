@@ -25,6 +25,9 @@ public class Amende {
     @Column(name = "raison")
     private String raison;
 
+    @Column(name = "amende_payer")
+    private boolean amendePayer = false;
+
     @ManyToOne
     @JoinColumn(name = "id_membre", nullable = false)
     private Membre membre;

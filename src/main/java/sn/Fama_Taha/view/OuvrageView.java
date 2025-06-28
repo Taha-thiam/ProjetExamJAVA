@@ -3,117 +3,19 @@ package sn.Fama_Taha.view;
 import sn.Fama_Taha.entity.Ouvrage;
 import sn.Fama_Taha.repository.OuvrageRepository;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 
 public class OuvrageView extends JPanel {
-    private JTable ouvrageTable;
-    private DefaultTableModel tableModel;
-    private OuvrageRepository ouvrageRepository = new OuvrageRepository();
-
-    public OuvrageView() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 250));
-
-        String[] columns = { "ID", "Titre", "Auteur", "Année", "Genre", "Disponible" };
-        tableModel = new DefaultTableModel(columns, 0) {
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        ouvrageTable = new JTable(tableModel);
-        ouvrageTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        ouvrageTable.setRowHeight(28);
-        ouvrageTable.setGridColor(new Color(220, 220, 220));
-        ouvrageTable.setSelectionBackground(new Color(102, 178, 255));
-        ouvrageTable.setSelectionForeground(Color.BLACK);
-
-        // En-tête du tableau stylisée
-        ouvrageTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 16));
-        ouvrageTable.getTableHeader().setBackground(new Color(51, 102, 204));
-        ouvrageTable.getTableHeader().setForeground(Color.WHITE);
-
-        // Cellules alternées colorées
-        ouvrageTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                    boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? new Color(235, 243, 255) : Color.WHITE);
-                } else {
-                    c.setBackground(new Color(102, 178, 255));
-                }
-                return c;
-            }
-        });
-
-        loadOuvrages();
-
-        JScrollPane scrollPane = new JScrollPane(ouvrageTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(scrollPane, BorderLayout.CENTER);
-
-        JButton addButton = new JButton("Ajouter un ouvrage");
-        JButton editButton = new JButton("Modifier");
-        JButton deleteButton = new JButton("Supprimer");
-
-        // Style des boutons
-        Color btnColor = new Color(51, 102, 204);
-        Font btnFont = new Font("Segoe UI", Font.BOLD, 15);
-        for (JButton btn : new JButton[] { addButton, editButton, deleteButton }) {
-            btn.setBackground(btnColor);
-            btn.setForeground(Color.WHITE);
-            btn.setFocusPainted(false);
-            btn.setFont(btnFont);
-            btn.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
-        }
-
-        addButton.addActionListener(_ -> ajouterOuvrage());
-        editButton.addActionListener(_ -> modifierOuvrage());
-        deleteButton.addActionListener(_ -> supprimerOuvrage());
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(245, 245, 250));
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 15));
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        // Titre en haut
-        JLabel titre = new JLabel("Gestion des Ouvrages");
-        titre.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        titre.setForeground(new Color(51, 102, 204));
-        titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
-        titre.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titre, BorderLayout.NORTH);
-    }
-
-    private void loadOuvrages() {
-        tableModel.setRowCount(0);
-        List<Ouvrage> ouvrages = ouvrageRepository.findAll();
-        for (Ouvrage o : ouvrages) {
-            tableModel.addRow(new Object[] {
-                    o.getIdOuvrage(),
-                    o.getTitre(),
-                    o.getAuteur(),
-                    o.getAnneePublication(),
-                    o.getGenre(),
-                    o.isDisponible() ? "Oui" : "Non"
-            });
-        }
-    }
-
     private void ajouterOuvrage() {
         JTextField idField = new JTextField();
         JTextField titreField = new JTextField();
         JTextField auteurField = new JTextField();
         JTextField anneeField = new JTextField();
         JTextField genreField = new JTextField();
-        JCheckBox disponibleBox = new JCheckBox("Disponible");
+        JCheckBox disponibleBox = new JCheckBox("Disponible", true);
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.add(new JLabel("ID :"));
@@ -131,6 +33,12 @@ public class OuvrageView extends JPanel {
         int result = JOptionPane.showConfirmDialog(this, panel, "Ajouter un ouvrage", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
+            if (idField.getText().isEmpty() || titreField.getText().isEmpty() || auteurField.getText().isEmpty()
+                    || anneeField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tous les champs sauf genre sont obligatoires.", "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             try {
                 Ouvrage ouvrage = new Ouvrage();
                 ouvrage.setIdOuvrage(idField.getText());
@@ -148,14 +56,172 @@ public class OuvrageView extends JPanel {
         }
     }
 
-    private void modifierOuvrage() {
-        int selectedRow = ouvrageTable.getSelectedRow();
+    private JTable ouvrageTable;
+    private DefaultTableModel tableModel;
+    private OuvrageRepository ouvrageRepository = new OuvrageRepository();
+
+    public OuvrageView() {
+
+        setLayout(new BorderLayout());
+        setBackground(new Color(245, 245, 250));
+
+        String[] columns = { "ID", "Titre", "Auteur", "Année", "Genre", "Disponible", "Modifier", "Supprimer" };
+        tableModel = new DefaultTableModel(columns, 0) {
+            public boolean isCellEditable(int row, int column) {
+                // Seules les colonnes "Modifier" et "Supprimer" sont éditables (boutons)
+                return column == 6 || column == 7;
+            }
+        };
+        ouvrageTable = new JTable(tableModel);
+        ouvrageTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        ouvrageTable.setRowHeight(28);
+        ouvrageTable.setGridColor(new Color(220, 220, 220));
+        ouvrageTable.setSelectionBackground(new Color(102, 178, 255));
+        ouvrageTable.setSelectionForeground(Color.BLACK);
+
+        // En-tête du tableau stylisée
+        JTableHeader header = ouvrageTable.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        header.setBackground(new Color(51, 102, 204));
+        header.setForeground(Color.WHITE);
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+
+        // Cellules alternées colorées
+        ouvrageTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? new Color(235, 243, 255) : Color.WHITE);
+                } else {
+                    c.setBackground(new Color(102, 178, 255));
+                }
+                setHorizontalAlignment(CENTER);
+                return c;
+            }
+        });
+
+        // Ajout des renderers et editors pour les boutons
+        ouvrageTable.getColumn("Modifier").setCellRenderer(new ButtonRenderer("Modifier", new Color(241, 196, 15)));
+        ouvrageTable.getColumn("Modifier").setCellEditor(new ButtonEditor(new JCheckBox(), "Modifier"));
+        ouvrageTable.getColumn("Supprimer").setCellRenderer(new ButtonRenderer("Supprimer", new Color(231, 76, 60)));
+        ouvrageTable.getColumn("Supprimer").setCellEditor(new ButtonEditor(new JCheckBox(), "Supprimer"));
+
+        loadOuvrages();
+
+        JScrollPane scrollPane = new JScrollPane(ouvrageTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(scrollPane, BorderLayout.CENTER);
+
+     
+        // Création du bouton
+        JButton addButton = new JButton("Ajouter un ouvrage");
+        addButton.setBackground(new Color(51, 102, 204));
+        addButton.setForeground(Color.WHITE);
+        addButton.setFocusPainted(false);
+        addButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        addButton.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
+        addButton.addActionListener(_ -> ajouterOuvrage());
+
+        // Création du titre
+        JLabel titre = new JLabel("Gestion des Ouvrages");
+        titre.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titre.setForeground(new Color(51, 102, 204));
+        titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
+        titre.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Panel vertical pour bouton + titre
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBackground(new Color(245, 245, 250));
+        topPanel.add(addButton);
+        topPanel.add(titre);
+
+        add(topPanel, BorderLayout.NORTH);
+
+        // ...le reste du code...
+    }
+
+    private void loadOuvrages() {
+        tableModel.setRowCount(0);
+        List<Ouvrage> ouvrages = ouvrageRepository.findAll();
+        for (Ouvrage o : ouvrages) {
+            tableModel.addRow(new Object[] {
+                    o.getIdOuvrage(),
+                    o.getTitre(),
+                    o.getAuteur(),
+                    o.getAnneePublication(),
+                    o.getGenre(),
+                    o.isDisponible() ? "Oui" : "Non",
+                    "Modifier",
+                    "Supprimer"
+            });
+        }
+    }
+
+    // Renderer pour les boutons
+    class ButtonRenderer extends JButton implements TableCellRenderer {
+        public ButtonRenderer(String text, Color color) {
+            setText(text);
+            setOpaque(true);
+            setBackground(color);
+            setForeground(Color.WHITE);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            return this;
+        }
+    }
+
+    // Editor pour les boutons
+    class ButtonEditor extends DefaultCellEditor {
+        private JButton button;
+        private String actionType;
+        private int selectedRow;
+
+        public ButtonEditor(JCheckBox checkBox, String actionType) {
+            super(checkBox);
+            this.actionType = actionType;
+            button = new JButton(actionType);
+            button.setOpaque(true);
+            if ("Modifier".equals(actionType)) {
+                button.setBackground(new Color(241, 196, 15));
+            } else {
+                button.setBackground(new Color(231, 76, 60));
+            }
+            button.setForeground(Color.WHITE);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    fireEditingStopped();
+                    selectedRow = ouvrageTable.getSelectedRow();
+                    if ("Modifier".equals(actionType)) {
+                        modifierOuvrage(selectedRow);
+                    } else if ("Supprimer".equals(actionType)) {
+                        supprimerOuvrage(selectedRow);
+                    }
+                }
+            });
+        }
+
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                boolean isSelected, int row, int column) {
+            selectedRow = row;
+            return button;
+        }
+
+        public Object getCellEditorValue() {
+            return actionType;
+        }
+    }
+
+    // Adaptation de modifierOuvrage pour recevoir l'index
+    private void modifierOuvrage(int selectedRow) {
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à modifier.");
             return;
         }
-
-        // Récupérer les valeurs actuelles
         String id = tableModel.getValueAt(selectedRow, 0).toString();
         String titre = tableModel.getValueAt(selectedRow, 1).toString();
         String auteur = tableModel.getValueAt(selectedRow, 2).toString();
@@ -199,8 +265,8 @@ public class OuvrageView extends JPanel {
         }
     }
 
-    private void supprimerOuvrage() {
-        int selectedRow = ouvrageTable.getSelectedRow();
+    // Adaptation de supprimerOuvrage pour recevoir l'index
+    private void supprimerOuvrage(int selectedRow) {
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un ouvrage à supprimer.");
             return;
@@ -215,4 +281,5 @@ public class OuvrageView extends JPanel {
             }
         }
     }
+
 }

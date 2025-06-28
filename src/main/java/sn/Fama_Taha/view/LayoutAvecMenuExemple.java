@@ -56,6 +56,12 @@ public class LayoutAvecMenuExemple extends JFrame {
         menuReservation.setFont(fontMenu);
         JMenuItem itemListerReservations = new JMenuItem("Lister les réservations");
         menuReservation.add(itemListerReservations);
+        // Menu Amendes
+        JMenu menuAmende = new JMenu("Amendes");
+        menuAmende.setForeground(Color.WHITE);
+        menuAmende.setFont(fontMenu);
+        JMenuItem itemListerAmendes = new JMenuItem("Lister les amendes");
+        menuAmende.add(itemListerAmendes);
 
         // Ajout des menus à la barre
         menuBar.add(menuAccueil); // Ajout du menu Accueil en premier
@@ -63,6 +69,7 @@ public class LayoutAvecMenuExemple extends JFrame {
         menuBar.add(menuOuvrage);
         menuBar.add(menuEmprunt);
         menuBar.add(menuReservation);
+        menuBar.add(menuAmende);
 
         setJMenuBar(menuBar);
 
@@ -107,6 +114,13 @@ public class LayoutAvecMenuExemple extends JFrame {
         itemListerEmprunts.addActionListener(_ -> {
             contentPanel.removeAll();
             contentPanel.add(new EmpruntView(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+        // Action du menu Amendes
+        itemListerAmendes.addActionListener(_ -> {
+            contentPanel.removeAll();
+            contentPanel.add(new AmendeView(), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });
