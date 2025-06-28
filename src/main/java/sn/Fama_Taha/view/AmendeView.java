@@ -30,6 +30,36 @@ public class AmendeView extends JPanel {
         amendeTable = new JTable(tableModel);
         amendeTable.setRowHeight(28);
 
+        // --- DESIGN DU TABLEAU ---
+        amendeTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        amendeTable.setSelectionBackground(new Color(174, 214, 241)); // bleu clair sélection
+        amendeTable.setSelectionForeground(Color.BLACK);
+        amendeTable.setShowGrid(false);
+
+        // En-tête stylisé
+        JTableHeader header = amendeTable.getTableHeader();
+        header.setBackground(new Color(41, 128, 185)); // bleu foncé
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+
+        // Couleurs alternées pour les lignes
+        amendeTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? new Color(236, 240, 241) : Color.WHITE); // gris très clair / blanc
+                } else {
+                    c.setBackground(new Color(174, 214, 241)); // bleu clair sélection
+                }
+                setHorizontalAlignment(CENTER);
+                return c;
+            }
+        });
+        // --- FIN DESIGN ---
+
         // Ajout des renderers et editors pour les boutons
         amendeTable.getColumn("Changer état").setCellRenderer(new ButtonRenderer("Changer état", new Color(52, 152, 219)));
         amendeTable.getColumn("Changer état").setCellEditor(new ButtonEditor(new JCheckBox(), "Changer état"));

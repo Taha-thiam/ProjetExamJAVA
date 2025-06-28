@@ -28,4 +28,8 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "id_ouvrage", nullable = false)
     private Ouvrage ouvrage;
+    private boolean active;
+    public boolean isActive() {
+    return active;
+}
 }

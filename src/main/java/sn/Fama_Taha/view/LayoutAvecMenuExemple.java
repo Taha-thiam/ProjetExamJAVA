@@ -124,6 +124,13 @@ public class LayoutAvecMenuExemple extends JFrame {
             contentPanel.revalidate();
             contentPanel.repaint();
         });
+
+        itemListerReservations.addActionListener(_ -> {
+            contentPanel.removeAll();
+            contentPanel.add(new ReservationView(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
         // Ajoutez les autres actions ici...
 
         // Affichage de la page d'accueil par défaut au lancement
